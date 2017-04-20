@@ -1,17 +1,67 @@
 import json
-from app import app,producer,KAFKA_HOST
+from app import app,KAFKA_HOST
 from kafka.client import KafkaClient
 from kafka import KafkaConsumer,KafkaProducer,SimpleProducer,SimpleConsumer
 from kafka import KafkaProducer,KafkaClient,TopicPartition
 from datetime import datetime
 import threading
 
+ 
+def kafka_json_producer():
+    return KafkaProducer(bootstrap_servers=KAFKA_HOST,value_serializer=lambda v: json.dumps(v).encode('utf-8'))
+
+def kafka_json_consumer():
+    return KafkaConsumer(bootstrap_servers=KAFKA_HOST,auto_offset_reset='earliest',value_deserializer = lambda m: json.loads(m.decode('utf-8')))
+
+def kafka_send(_topic, dict_message):
+    if isinstance(dict_message,dict):
+        lock  = threading.Lock()
+        with lock:        
+            producer = kafka_json_producer()
+            future = producer.send(_topic,dict_message)
+            record_meta = future.get(timeout=30)
+            producer.close(timeout=10)
+            return { 'result' : True
+                    , 'topic' : record_meta.topic
+                    , 'partition' : record_meta.partition
+                    , 'offset' : record_meta.offset 
+            }
+    else:
+        return { 'result' : False
+                    , 'error' : 'TypeError'
+                    , 'message' : dict_message
+            }
+
+def kafka_poll(_topic,poll_size=1,_offset=0,_partition=0,poll_timeout_ms=1000):
+    buf = []
+    lock  = threading.Lock()
+    with lock:
+        consumer = kafka_json_consumer()
+        tp = TopicPartition(_topic,_partition)
+        consumer.assign([tp])
+        consumer.seek(tp,_offset)
+        records = consumer.poll(poll_timeout_ms,poll_size)
+        for record in records.values():
+            for x in record:
+                buf.append({
+                    'topic' : x.topic
+                    , 'partition' : x.partition
+                    , 'offset' : x.offset
+                    , 'value' : x.value
+                })
+        consumer.close()
+    return buf;
+        
+         
 def kafka_test():
     lock  = threading.Lock()
     with lock:
         msg = 'message testing!!!!222 ' + str(datetime.now().time())
+        producer = KafkaProducer(bootstrap_servers=KAFKA_HOST)
         producer.send('my_favorite_topic',bytes(msg,'utf-8'))
+        producer.close(timeout=5)
         print('done')
+        
 
 def kafka_test_consume_standby():    
     consumer = KafkaConsumer(bootstrap_servers=KAFKA_HOST,auto_offset_reset='earliest',value_deserializer = lambda m: json.loads(m.decode('utf-8')))
@@ -19,7 +69,7 @@ def kafka_test_consume_standby():
     tp = TopicPartition('my_favorite_topic',0)
     consumer.assign([tp])
     consumer.seek(tp,1048)
-    records = consumer.poll(10000,20)
+    records = consumer.poll(500,20)
     for record in records.values():
         for x in record:
             print(type(x.value))
@@ -33,6 +83,14 @@ def kafka_test_consume_standby():
 #                                           message.value))    
 #     consumer.close()
 
-
+import numpy as np
 if __name__ == '__main__':
-    kafka_test_consume_standby()
+#     kafka_test_consume_standby()
+    _topic = '11d764dccdad4977a885104787bef3f8'
+    
+    print(np.random.random_sample(4))
+    for _ in range(100):
+        r = kafka_send(_topic,{'ep_id' : _topic, 'ep_value' : list(np.random.random_sample(4)) })
+        print(r)
+#     r = kafka_poll(_topic,100,0)
+#     print(r)

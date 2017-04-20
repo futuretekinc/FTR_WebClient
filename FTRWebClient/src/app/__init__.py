@@ -42,6 +42,7 @@ def init_app():
 
 app, metadata, db, ma = init_app()
 
+KAFKA_HOST = app.config.get('KAFKA_HOST')
 
 @app.before_first_request
 def before_first_request_handler():
@@ -67,8 +68,6 @@ def shutdown_session(exception=None):
 
 
 
-KAFKA_HOST = app.config.get('KAFKA_HOST') 
-producer = KafkaProducer(bootstrap_servers=KAFKA_HOST)
    
 from app.client.controllers import client
 app.register_blueprint(client)
