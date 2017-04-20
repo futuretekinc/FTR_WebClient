@@ -1,0 +1,19 @@
+{% extends "layout/main.html" %}
+
+{% block scripts %}
+{{super()}}
+<script>
+var network = '/cgi-bin/network?cmd=get';
+
+$(document).ready(function(){
+	
+	bootbox.alert('Unsupported Wifi!');
+});
+
+</script>
+{% endblock %}
+
+{% block content %} 
+
+{% endblock %}
+

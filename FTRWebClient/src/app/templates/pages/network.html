@@ -1,0 +1,126 @@
+{% extends "layout/main.html" %}
+
+{% block scripts %}
+{{super()}}
+<script>
+var network = '/cgi-bin/network?cmd=get';
+
+$(document).ready(function(){
+	
+	$.postJSON(network, function(d){
+		console.log(JSON.stringify(d));
+		var network = d['network'];
+		var interf = network['interface'];
+		console.log(JSON.stringify(interf[0]));
+		console.log(JSON.stringify(interf[1]));
+		bootbox.alert("test")
+	});
+	
+});
+
+</script>
+{% endblock %}
+
+{% block content %} 
+<div class="row">
+	<div class="col-md-4">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<!-- 
+       			<span class="label label-success pull-right">기본외부망</span>
+       			 -->
+				<h5>기본외부망</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="form-group form-inline">
+					<label for='interface' id='text-active_interface'>인터페이스</label> 
+					<select class='form-control pull-right' id='interface' selected='selected'>
+						<option value="0">usb0</option>
+						<option value="1">eth0</option>
+					</select>
+				</div>
+				<div class="form-group form-inline">
+					<label for="dhcp" id="text_active_dhcp">자동으로 주소 받기</label> 
+					<input class="form-control pull-right" type="checkbox" id="dhcp" style="width: 18px; height: 18px;">
+				</div>
+				<div class="form-group form-inline">
+					<label for="ip" id="text_active_ip">IP 주소</label> 
+					<input class="form-control pull-right" type="text" id="ip" value="10.0.1.47">
+				</div>
+				<div class="form-group form-inline">
+					<label for="subnet" id="text_active_subnet">서브넷 마스크</label> 
+					<input class="form-control pull-right" type="text" id="subnet">
+				</div>
+				<div class="form-group form-inline">
+					<label for="subnet" id="text_active_subnet">기본게이트웨이</label> 
+					<input class="form-control pull-right" type="text" id="subnet">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<!-- 
+       			<span class="label label-success pull-right">기본외부망</span>
+       			 -->
+				<h5>보조외부망</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="form-group form-inline">
+					<label for='interface' id='text-active_interface'>인터페이스</label> 
+					<select class='form-control pull-right' id='interface' selected='selected'>
+						<option value="0">usb0</option>
+						<option value="1">eth0</option>
+					</select>
+				</div>
+				<div class="form-group form-inline">
+					<label for="dhcp" id="text_active_dhcp">자동으로 주소 받기</label> <input
+						class="form-control pull-right" type="checkbox" id="dhcp"
+						style="width: 18px; height: 18px;">
+				</div>
+				<div class="form-group form-inline">
+					<label for="ip" id="text_active_ip">IP 주소</label> <input
+						class="form-control pull-right" type="text" id="ip"
+						value="10.0.1.47">
+				</div>
+				<div class="form-group form-inline">
+					<label for="subnet" id="text_active_subnet">서브넷 마스크</label> <input
+						class="form-control pull-right" type="text" id="subnet">
+				</div>
+				<div class="form-group form-inline">
+					<label for="subnet" id="text_active_subnet">기본게이트웨이</label> <input
+						class="form-control pull-right" type="text" id="subnet">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<!-- 
+       			<span class="label label-success pull-right">기본외부망</span>
+       			 -->
+				<h5>내부망</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="form-group form-inline">
+					<label for="ip" id="text_active_ip">IP 주소</label> <input
+						class="form-control pull-right" type="text" id="ip"
+						value="10.0.1.47">
+				</div>
+				<div class="form-group form-inline">
+					<label for="subnet" id="text_active_subnet">서브넷 마스크</label> <input
+						class="form-control pull-right" type="text" id="subnet">
+				</div>
+				<div class="">
+				
+				</div>
+			</div>
+		</div>
+	</div>
+		
+</div>  
+{% endblock %}
+

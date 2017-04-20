@@ -1,0 +1,84 @@
+{% extends "layout/main.html" %}
+
+{% block scripts %}
+{{super()}}
+<script>
+var network = '/cgi-bin/network?cmd=get';
+
+$(document).ready(function(){
+	
+	$.postJSON(network, function(d){
+		console.log(JSON.stringify(d));
+		var network = d['network'];
+		var interf = network['interface'];
+		console.log(JSON.stringify(interf[0]));
+		console.log(JSON.stringify(interf[1]));
+	});
+	
+});
+
+</script>
+{% endblock %}
+
+{% block content %} 
+
+<div class="row">
+	<div class="col-lg-5">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>LTE</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="row">
+{% macro stats_label(size,label,value='') -%}
+					<div class="col-xs-{{size}}">
+						<small class="stats-label">{{label}}</small>
+						<h3>{{value}}</h3>
+					</div>
+{% endmacro %}				
+					{{ stats_label(4, 'PORT', '8080') }}
+					{{ stats_label(4, 'IP', '192.168.0.1') }}
+					{{ stats_label(4, 'SUBNET', '255.255.0.0') }}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-7">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>정보</h5>
+			</div>
+			<div class="ibox-content">
+			
+{% macro read_only_input(title,id,value='') -%}
+				<div class="form-group row">
+					<div class="col-xs-4">
+						<label for="{{id}}" id="text_{{id}}">{{title}}</label> 
+					</div>
+					<div class="col-xs-8 form">
+						<span class="form-control input-sm" id="{{id}}" style="width:auto;">{{value}}</span>
+					</div>
+				</div>
+{% endmacro %}	
+				{{ read_only_input('USIM'                        ,'id_usim')            }}
+				{{ read_only_input('MDN'                         ,'id_mdn')             }}
+				{{ read_only_input('TIME'                        ,'id_time')            }}
+				{{ read_only_input('DL EARFCN'                   ,'id_dl_earfcn')       }}
+				{{ read_only_input('RX Power'                    ,'id_rx_power')        }}
+				{{ read_only_input('TX Adjust'                   ,'id_tx_adjust')       }}
+				{{ read_only_input('TX Power'                    ,'id_tx_power')        }}
+				{{ read_only_input('Pilot PN Offset'             ,'id_pilot_offset')    }}
+				{{ read_only_input('Ec/lo'                       ,'id_eclo')            }}
+				{{ read_only_input('System Identification'       ,'id_sys_id')          }}
+				{{ read_only_input('Network Identification'      ,'id_net_id')          }}
+				{{ read_only_input('Registration Zone'           ,'id_reg_zone')        }}
+				{{ read_only_input('Base Station Identification' ,'id_base_station_id') }}
+				</div>
+			</div>
+		</div>
+
+		
+</div>  
+{% endblock %}
+
+

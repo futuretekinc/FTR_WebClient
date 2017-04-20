@@ -1,0 +1,84 @@
+{% extends "layout/main.html" %}
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block content %} 
+<div class="row">
+
+
+	<div class="col-lg-6">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>DHCP 서버 정보</h5>
+			</div>
+			<div class="ibox-content">
+			
+{% macro device_info(title,id,value='') -%}
+				<div class="form-group row">
+					<div class="col-xs-4">
+						<label for="{{id}}" id="text_{{id}}">{{title}}</label> 
+					</div>
+					<div class="col-xs-8 form">
+						<span class="form-control input-sm" id="{{id}}" style="width:auto;">{{value}}</span>
+					</div>
+				</div>
+{% endmacro %}	
+				{{ device_info('모델'       , 'id_' 	 , 	'FTM-100U'       ) }}
+				{{ device_info('시리얼 번호'   , 'id_'  ,	'FTM100U-560040' ) }}
+				{{ device_info('하드웨어 버전' , 'id_'   ,	'FTM100U-560040' ) }} 
+				{{ device_info('모뎀 버전'    , 'id_'	 ,	'V1.1.9_DATA'    ) }}
+				</div>
+			</div>
+		</div>
+
+
+<div class="col-lg-6">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>비밀번호 변경</h5>
+			</div>
+			<div class="ibox-content">
+			
+{% macro change_password(title,id,value='',type='input') -%}
+				<div class="form-group row">
+					<div class="col-xs-4">
+						<label for="{{id}}" id="text_{{id}}">{{title}}</label> 
+					</div>
+					<div class="col-xs-8 form">
+						<input type="{{type}}" name="{{id}}" class="form-control input-sm" id="{{id}}" ></input>
+					</div>
+				</div>
+{% endmacro %}	
+{% macro change_password_btn() -%}
+				<div class="form-group row">
+					<div class="col-xs-12">
+						<div class="pull-right">
+						<button class=" btn btn-primary">수정</button>
+						</div>
+					</div>
+				</div>
+{% endmacro %}	
+				{{ change_password('기존 비밀번호'   , 'id_f1' ) }}
+				{{ change_password('새 비밀번호'    , 'id_eth'  ) }}
+				{{ change_password('새 비밀번호 확인' , 'id_eth'  ) }} 
+				{{ change_password_btn() }}
+				</div>
+			</div>
+		</div>
+		
+
+
+
+
+
+
+
+
+
+
+		
+</div>  
+{% endblock %}
+

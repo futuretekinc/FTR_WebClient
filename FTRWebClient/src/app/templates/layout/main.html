@@ -1,0 +1,109 @@
+{% extends "layout/base.html" %}
+{% block body %}
+<div id="wrapper">
+	<div id="page-wrapper" class="gray-bg">
+        <div class="row border-bottom white-bg">
+	        <nav class="navbar navbar-static-top" role="navigation">
+            <div class="navbar-header">
+                <button aria-controls="navbar" aria-expanded="false" data-target="#navbar" data-toggle="collapse" class="navbar-toggle collapsed" type="button">
+                    <i class="fa fa-reorder"></i>
+                </button>
+               <a href="#" class="navbar-brand">FTM Manager</a>
+            </div>
+            <div class="navbar-collapse collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <li id="menu_01" class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 대시보드 <span class="caret"></span></a>
+                        <ul id="drop_01" role="menu" class="dropdown-menu">
+                            <li><a href="">Menu item</a></li>
+                            <li><a href="">Menu item</a></li>
+                            <li><a href="">Menu item</a></li>
+                            <li><a href="">Menu item</a></li>
+                        </ul>
+                    </li>
+                    <li id="menu_02" class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 클라우드연동 <span class="caret"></span></a>
+                        <ul id="drop_02" role="menu" class="dropdown-menu">
+                            <li><a href="">Menu item</a></li>
+                            <li><a href="">Menu item</a></li>
+                            <li><a href="">Menu item</a></li>
+                            <li><a href="">Menu item</a></li>
+                        </ul>
+                    </li>                  
+                    <li id="menu_03" class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 네트워크정보 <span class="caret"></span></a>
+                        <ul id="drop_03" role="menu" class="dropdown-menu">
+                            <li><a href="/pages/network">네트워크 정보</a></li>
+                            <li><a href="/pages/lte_status">LTE 상태정보</a></li>
+                            <li><a href="/pages/lte_apn">LTE APN설정</a></li>
+                            <li><a href="/pages/wifi">Wifi</a></li>
+                            <li><a href="/pages/dhcp">DHCP</a></li>
+                            <li><a href="/pages/firewall">Firwwall</a></li>
+                            <li><a href="/pages/ssl_vpn">SSL VPN</a></li>
+                        </ul>
+                    </li>
+                    <li id="menu_04" class="dropdown">
+                        <a aria-expanded="false" role="button" href="#" class="dropdown-toggle" data-toggle="dropdown"> 시스템정보 <span class="caret"></span></a>
+                        <ul id="drop_04" role="menu" class="dropdown-menu">
+                            <li><a href="/pages/sys_info">정보</a></li>
+                            <li><a href="/pages/sys_log">로그</a></li>
+                            <li><a href="/pages/sys_reboot">시스템 재시작</a></li>
+                        </ul>
+                    </li>	
+                </ul>
+                <ul class="nav navbar-top-links navbar-right">
+                    <li>
+                        <a href="login.html">
+                            <i class="fa fa-sign-out"></i> Log out
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        </div> 
+		<div class="wrapper wrapper-content">
+			<div class="container">
+				{% block content %}
+				{% endblock %}
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock body %}
+
+{% block scripts %}
+{{super()}}
+    <!-- Mainly scripts -->
+    <script src="{{url_for('static',filename='js/plugins/metisMenu/jquery.metisMenu.js')}}"></script>
+    <script src="{{url_for('static',filename='js/plugins/slimscroll/jquery.slimscroll.min.js')}}"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="{{url_for('static',filename='js/inspinia.js')}}"></script>
+    <script src="{{url_for('static',filename='js/plugins/pace/pace.min.js')}}"></script>
+
+    <!-- jQuery UI -->
+    <script src="{{url_for('static',filename='js/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
+
+    <script src="{{url_for('static',filename='assets/js/admin/ftr_alert.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/admin/ftr_extend.js')}}"></script>
+
+    <!-- DataTables -->
+    <script src="{{url_for('static',filename='js/plugins/dataTables/datatables.min.js')}}"></script>
+	
+	<!-- FooTable -->
+    <script src="{{url_for('static',filename='js/plugins/footable/footable.all.min.js')}}"></script>
+    
+    <!-- Sweet alert -->
+    <script src="{{url_for('static',filename='js/plugins/sweetalert/sweetalert.min.js')}}"></script>
+    
+    <!-- bootbox -->
+    <script src="{{url_for('static',filename='assets/js/bootbox/bootbox.min.js')}}"></script>
+    
+    <!-- bootbox-util -->
+    <script src="{{url_for('static',filename='assets/js/admin/ftr_alert.js')}}"></script>
+    <script src="{{url_for('static',filename='assets/js/admin/ftr_extend.js')}}"></script> 
+    	
+	<script>
+	var g_localhost = 'http://http://10.0.1.47'
+	</script>
+{% endblock %}
