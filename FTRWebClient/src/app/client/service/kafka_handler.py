@@ -13,6 +13,23 @@ def kafka_json_producer():
 def kafka_json_consumer():
     return KafkaConsumer(bootstrap_servers=KAFKA_HOST,auto_offset_reset='earliest',value_deserializer = lambda m: json.loads(m.decode('utf-8')))
 
+def kafka_send_no_lock(_topic, dict_message):
+    if isinstance(dict_message,dict):
+        producer = kafka_json_producer()
+        future = producer.send(_topic,dict_message)
+        record_meta = future.get(timeout=30)
+        producer.close(timeout=10)
+        return { 'result' : True
+            , 'topic' : record_meta.topic
+            , 'partition' : record_meta.partition
+            , 'offset' : record_meta.offset 
+        }
+    else:
+        return { 'result' : False
+                    , 'error' : 'TypeError'
+                    , 'message' : dict_message
+            }
+        
 def kafka_send(_topic, dict_message):
     if isinstance(dict_message,dict):
         lock  = threading.Lock()

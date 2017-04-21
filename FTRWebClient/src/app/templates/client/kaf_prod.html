@@ -14,6 +14,10 @@ textarea{
 
 function fn_onProducer() {
 	var $form = $('#form_id');
+	var time = Math.round(new Date().getTime()/1000);
+	var $hiddenInput = $('<input/>',{type:'hidden',id: 'time',value:time});
+	$hiddenInput.appendTo($form);
+	$('#ep_time').val(time);
 	$form.attr({'action' : '/client/kaf_prod'});
 	$form.attr({'method' : 'POST'});
 	$form.submit();
@@ -43,7 +47,83 @@ $(document).ready(function(){
 </script>
 {% endblock %} {% block content %}
 
+
 <div class="row">
+
+	<div class="col-lg-8">
+	<div class="ibox">
+		<div class="ibox-content">
+	<textarea id="poll_view" class="form-control input bg-gray" cols="20" rows="30" style=""></textarea>
+		</div>
+	</div>
+	</div>
+	<div class="col-lg-4">
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>KAFKA - 데이터 등록 테스트</h5>
+			</div>
+			<div class="ibox-content">
+				<div class="row">
+					{% call render_form_noSubmit(form, form_id='form_id') %}
+					{{ render_field(form.ep_time) }}
+					<div class="col-md-12">{{ render_field(form.ep_id) }}</div>
+					<div class="col-md-12">{{ render_field(form.ep_value) }}</div>
+					{% endcall %}
+					<div class="col-md-12">
+						<div class="text-right">
+							<button id="form_save" class='btn btn-success'>저장</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="ibox float-e-margins">
+			<div class="ibox-title">
+				<h5>KAFKA - 조회 테스트</h5>
+			</div>
+			<div class="ibox-content">
+				<h4 class="m-b">&lt; TOPIC - 엔드포인트 ID &gt;</h4>
+				<div class="row">
+{% macro kafka_search(title,id,type='text',value='') -%}
+				<div class="col-xs-12">
+				<div class="form-group row">
+					<div class="col-xs-3">
+						<label for="{{id}}" id="text_{{id}}">{{title}}</label> 
+					</div>
+					<div class="col-xs-9 form">
+						<input type="{{type}}" name="{{id}}" class="form-control input-sm" id="{{id}}" style="width:auto;" value="{{value}}" />
+					</div>
+				</div>
+				</div>
+{% endmacro %}	
+				{# {{ kafka_search('topic','s_topic','text') }} #}
+				{{ kafka_search('poll_size' , 's_poll_size','number','10') }}				
+				{{ kafka_search('offset' , 's_offset','number','0') }}				
+				{{ kafka_search('partition','s_part','number','0') }}				
+					<div class="col-md-12">
+						<div class="text-right">
+							<button id="poll_data" class='btn btn-primary'>조회</button>
+						
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="row" style="display:none;">
 
 	<div class="col-lg-12">
 		<div class="ibox float-e-margins">
@@ -53,9 +133,8 @@ $(document).ready(function(){
 			<div class="ibox-content">
 				<div class="row">
 					{% call render_form_noSubmit(form, form_id='form_id') %}
+					{{ render_field(form.ep_time) }}
 					<div class="col-md-3">{{ render_field(form.ep_id) }}</div>
-					<div class="col-md-3">{{ render_field(form.ep_type) }}</div>
-					<div class="col-md-3">{{ render_field(form.ep_scale) }}</div>
 					<div class="col-md-3">{{ render_field(form.ep_value) }}</div>
 					{% endcall %}
 					<div class="col-md-12">
@@ -87,7 +166,7 @@ $(document).ready(function(){
 				</div>
 				</div>
 {% endmacro %}	
-				{# {{ kafka_search('topic','s_topic','text') }} #}				
+				{# {{ kafka_search('topic','s_topic','text') }} #}
 				{{ kafka_search('poll_size' , 's_poll_size','number','10') }}				
 				{{ kafka_search('offset' , 's_offset','number','0') }}				
 				{{ kafka_search('partition','s_part','number','0') }}				
