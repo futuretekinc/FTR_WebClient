@@ -1,4 +1,4 @@
-{% extends "layout/base.html" %}
+{% extends "layout/main.html" %}
 {% block body %}
 <div id="wrapper">
 	<div id="page-wrapper" class="gray-bg">
@@ -51,7 +51,7 @@
                         </ul>
                     </li>	
                 </ul>
-                <ul class="nav navbar-top-links navbar-right" style="display:none;">
+                <ul class="nav navbar-top-links navbar-right">
                     <li>
                         <a href="login.html">
                             <i class="fa fa-sign-out"></i> Log out
@@ -62,12 +62,10 @@
         </nav>
         </div> 
 		<div class="wrapper wrapper-content">
-			{% block container %}
 			<div class="container">
 				{% block content %}
-				{% endblock content %}
+				{% endblock %}
 			</div>
-			{% endblock container %}
 		</div>
 	</div>
 </div>

@@ -75,7 +75,7 @@ app.register_blueprint(client)
 @app.route('/')
 def index():
 #     return render_template('layout/main.html')
-    return redirect(url_for('client.kaf_prod'))
+    return redirect(url_for('client.dashboard'))
 
 db.create_all() 
 
