@@ -59,6 +59,7 @@ def kafka_poll(_topic,poll_size=1,_offset=0,_partition=0,poll_timeout_ms=1000):
         consumer.seek(tp,_offset)
         records = consumer.poll(poll_timeout_ms,poll_size)
         for record in records.values():
+            print(record)
             for x in record:
                 buf.append({
                     'topic' : x.topic
@@ -67,7 +68,7 @@ def kafka_poll(_topic,poll_size=1,_offset=0,_partition=0,poll_timeout_ms=1000):
                     , 'value' : x.value
                 })
         consumer.close()
-    return buf;
+    return buf
         
          
 def kafka_test():
@@ -101,13 +102,13 @@ def kafka_test_consume_standby():
 #     consumer.close()
 
 import numpy as np
+
 if __name__ == '__main__':
 #     kafka_test_consume_standby()
     _topic = '11d764dccdad4977a885104787bef3f8'
     
-    print(np.random.random_sample(4))
-    for _ in range(100):
-        r = kafka_send(_topic,{'ep_id' : _topic, 'ep_value' : list(np.random.random_sample(4)) })
-        print(r)
+    r = kafka_poll(_topic,poll_size=10,_offset=4,_partition=0,poll_timeout_ms=10000)
+    for x in r:
+        print(x)
 #     r = kafka_poll(_topic,100,0)
 #     print(r)

@@ -433,6 +433,8 @@ textarea{
 <!-- Toastr -->
 <script src="{{url_for('static',filename='js/plugins/toastr/toastr.min.js')}}"></script>
 
+<!-- taffydb -->
+<script src="{{url_for('static',filename='assets/js/taffydb/taffy-min.js')}}"></script>
 
 <!-- Highcharts -->
 <script src="http://code.highcharts.com/highcharts.js"></script>  
@@ -471,6 +473,7 @@ function fn_onPollData2() {
 		$('#poll_view').text(_data);
 	});
 }
+
 function fn_onPollData() {
 	$(document).fullScreen(true);
 }
@@ -486,66 +489,52 @@ $(document).ready(function(){
 
 
 <script type="text/javascript">
+function callback_form_show(e) {
+	e.preventDefault();
+	var time_type = $('#time_type').val();
+	var ep_day = $('#time_day').val();
+	var ep_id = $('#ep_id').val();
+	var param = {
+		'ep_day' : ep_day
+		, 'ep_id' : ep_id
+		, 'time_type' : time_type
+	} 
+	$.getJSON('/client/chart_data',param,show_chart);
+}
+
+function show_chart(cdata) {
+	var options = {
+			'chart' :{ 
+				type: 'spline',
+				zoomType: 'x'
+			},
+			'legend': {
+			},
+	        plotOptions: {
+	        	line : {
+	        		dataLabels : {
+	        			enabled : true
+	        		},
+	        		enableMouseTracking: false
+	        	}
+	        },
+	        xAxis: {
+	            categories: cdata['ep_time']
+	        },        
+			'series': [
+				{'data':  cdata['ep_data'], 'name': '1층 온도센서#1'},
+			],
+			'subtitle': {'text': ''},
+			'title': {'text': '한라 시그마 밸리 IoT'},
+			'yAxis': {'title': {'text': 'Number of Employees'}}			
+	}
+	var chart = Highcharts.chart('chart_container', options);
+	chart.setSize(null);
+}
 
 $(document).ready(function(){
-	var chart = Highcharts.chart('chart_container', 
-	{
-			
-		'chart' :{ 
-			//type:'area',
-			zoomType: 'x'
-		},
-		'legend': {
-			//'layout': 'vertical', 'middle': 'vertical', 'right': 'vertical'
-			//enabled: false
-		},
-		//'plotOptions': {'series': {'pointStart': 2010}},
-		/*
-        plotOptions: {
-            area: {
-                fillColor: {
-                    linearGradient: {
-                        x1: 0,
-                        y1: 0,
-                        x2: 0,
-                        y2: 1
-                    },
-                    stops: [
-                        [0, Highcharts.getOptions().colors[0]],
-                        [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0).get('rgba')]
-                    ]
-                },
-                marker: {
-                    radius: 2
-                },
-                lineWidth: 1,
-                states: {
-                    hover: {
-                        lineWidth: 1
-                    }
-                },
-                threshold: null
-            }
-        },		
-        */
-        plotOptions: {
-        	line : {
-        		dataLabels : {
-        			enabled : true
-        		},
-        		enableMouseTracking: false
-        	}
-        },
-		'series': [
-			{'data': [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175], 'name': '1층 온도센서#1'},
-			{'data': [24334, 25253, 27177, 26958, 29031, 219931, 237133, 214175], 'name': '11층 온도센서#3'},
-			{'data': [21334, 15253, 21171, 26158, 29011, 211231, 132133, 314175], 'name': '옥상 센서'}
-		],
-		'subtitle': {'text': ''},
-		'title': {'text': '한라 시그마 밸리 IoT'},
-		'yAxis': {'title': {'text': 'Number of Employees'}}}
-	);
-	chart.setSize(null);
+	$.getJSON('/client/chart_data',show_chart);
+	$('#form_show').click(callback_form_show);
 });
 
 function do_fullscreen(){
@@ -598,8 +587,6 @@ function do_fullscreen(){
 			<div class="row">
 			{{ left_view(4) }}
 			</div>
-
-		
 		
 		</div>
 		<div class="col-lg-7">
@@ -628,6 +615,26 @@ function do_fullscreen(){
 			<!-- MAIN -->
 		
 		</div>
+	<div class="col-lg-3">
+		<div class="row">
+		{% call render_form_noSubmit(form, form_id='form_id') %}
+			<div class="col-md-6">
+				{{ render_field(form.time_type) }}
+			</div>
+			<div class="col-md-6">
+				{{ render_field(form.time_day) }}
+			</div>
+			<div class="col-md-12">
+				{{ render_field(form.ep_id) }}
+			</div>
+			<div class="col-md-12">
+				<div class="text-right">
+					<button id="form_show" class='btn btn-success btn-sm'>조회</button>
+				</div>
+			</div>
+		{% endcall %}
+		</div>
+	</div>		
 		<div class="col-lg-3">
 			<div class="row m-b">
 			{{ table_example() }}
@@ -635,8 +642,6 @@ function do_fullscreen(){
 			<div class="row" style="display:none;">
 			{{ sample_side_table() }}
 			</div>
-
-		
 		</div>
 	</div>
 </div>
