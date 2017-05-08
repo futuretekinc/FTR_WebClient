@@ -36,7 +36,7 @@ def chart_data():
     return fn_jsonify(data)
 
 client.add_url_rule('/dashboard', 'dashboard' , dashboard)
-client.add_url_rule('/chart_data', 'chart_data' , chart_data)
+client.add_url_rule('/chart_data', 'chart_data' , chart_data) 
 
 @client.route("/prod_test",methods=['GET','POST'])
 def prod_test():
