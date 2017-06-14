@@ -16,6 +16,7 @@ class CM_CODEM(db.Model):
 class CM_CODED(db.Model):
     __tablename__ = "CM_CODED"
     __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
+
 class OB_ENDPOINT(db.Model):
     __tablename__ = "OB_ENDPOINT"
     __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
@@ -24,13 +25,26 @@ class OB_DEVICE(db.Model):
     __tablename__ = "OB_DEVICE"
     __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
 
+class OB_DEVICE_MAP(db.Model):
+    __tablename__ = "OB_DEVICE_MAP"
+    __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
+
 class OB_GATEWAY(db.Model):
     __tablename__ = "OB_GATEWAY"
+    __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
+
+class OB_GATEWAY_MAP(db.Model):
+    __tablename__ = "OB_GATEWAY_MAP"
     __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
 
 class OB_RESOURCE(db.Model):
     __tablename__ = "OB_RESOURCE"
     __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
+
+class CM_TIME(db.Model):
+    __tablename__ = "CM_TIME"
+    __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
+
 
 ''' TABLE-VIEW '''   
 class VW_OB_OBJECTS(db.Model):

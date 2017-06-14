@@ -82,20 +82,53 @@ $(document).ready(function(){
 <!-- MODAL -->
 
 <script type="text/javascript">
-
-function get_highchart_options(pTitle,xCategory, yLabel, series) {
+function get_highchart_optionsx(pTitle,xCategory, yLabel, series) {
 	var options = {
-		'chart' : { 'type' : 'spline' , 'zoomType' : 'x' }
+		'chart' : { 'type' : 'column' , 'zoomType' : 'x' }
 		, 'subtitle': {'text': ''}
 		, 'title': {'text': pTitle }
 		, 'legend' : { }
 		, 'plotOptions' : {
-	       	'line' : {
-	       		'dataLabels' : { 'enabled' : true }
-				, 'enableMouseTracking' : false
+	       	'column' : {
+	       		'pointPadding' : 0.2
+	       		, borderWidth : 0
 			}
 		}
-		, 'xAxis'  : { 'categories' : xCategory }
+		, 'xAxis' : { 'type' : 'datetime'}
+		, 'yAxis'  : {'title': {'text': yLabel } }			
+		, 'series' : series
+	};
+	return options;
+}
+
+function get_highchart_options(pTitle,pSubTitle, xCategory, yLabel, series) {
+	var options = {
+		'chart' : { 'type' : 'spline' , 'zoomType' : 'x' }
+		, 'subtitle': {'text': pSubTitle}
+		, 'title': {'text': pTitle }
+		,     legend: {
+	        layout: 'vertical',
+	        align: 'right',
+	        verticalAlign: 'middle'
+	    }
+
+		, 'plotOptions' : {
+	       	'spline' : {
+	       		'dataLabels' : { 'enabled' : true }
+				,
+				'marker' : { 'enabled' : false }
+			}
+		}
+/* 		, 'xAxis'  : { 
+				'type' : 'datetime'
+				, 'dateTimeLabelFormats' :  {
+			        'hour': '%I %p',
+			        'minute': '%I:%M %p'
+			    }, 
+			    'title' : '시간'
+			}
+		} */
+		, 'xAxis' : { 'type' : 'datetime'}
 		, 'yAxis'  : {'title': {'text': yLabel } }			
 		, 'series' : series
 	};
@@ -112,7 +145,7 @@ $(document).ready(function(){
 
 
 function render_page() {
-	$.getJSON('/client/chart_data',render_dashboard);
+	$.getJSON('/client/data',render_dashboard);
 }
 
 function callback_form_show(e) {
@@ -130,18 +163,16 @@ function callback_form_show(e) {
 
 function render_dashboard(data) {
 	
-	console.log('table')
-	console.log(data)
-	console.log('table')
-	var d = data['object'];
-	var table_data = data['table'];
-	var devices = d['devices'];
-	var endpoints = d['endpoints'];
-	var gateways = d['gateways'];
+	var d = data['dashboard'];
+	var gw = data['gateway'];
+	//var table_data = data['table'];
+	//var devices = d['devices'];
+	//var endpoints = d['endpoints'];
+	//var gateways = d['gateways'];
 	
-	show_chart(data);
-	show_table(table_data);
-	show_detail(gateways, devices, endpoints);
+	show_chart(d,gw);
+//	show_table(table_data);
+//	show_detail(gateways, devices, endpoints);
 }
 
 function show_detail(gateways, devices, endpoints) {
@@ -167,14 +198,60 @@ function show_detail(gateways, devices, endpoints) {
 	
 }
 
-function show_chart(cdata) {
-	var title = '한라 시그마 밸리 IoT';
-	var series = [ {'data':  cdata['ep_data'], 'name': '1층 온도센서#1'}, ];
-	var options = get_highchart_options(title,cdata['ep_time'] , '센서 데이터', series);
+
+function fn_toUTC(ep_unix) {
+	var d = new Date(parseInt(ep_unix)*1000);
+	var year = d.getUTCFullYear();
+	var month = d.getUTCMonth();
+	var day = d.getUTCDate();
+	var hour = d.getUTCHours();
+	var min = d.getUTCMinutes();
+
+	var r = Date.UTC(year, month, day, hour, min );
+	var offsetInMs = ((d.getTimezoneOffset() * 60)* 1000);
+	return r - offsetInMs;
+}
+
+function show_chart(cdata,gw) {
+	console.log(gw);
+	var title = gw['name'];
+	var subtitle = 'date - ' + gw['date'] + '(' + gw['time_type'] + ')'
+	var ctime = [];
+	var table_data = [];
+	var series = [ ];
+	for (var i = 0; i < cdata.length; i++) {
+		var obj = cdata[i];
+		
+		_ctime = obj['chart_time'];
+		_cdata = obj['chart_data'];
+		_tdata = obj['table_data'];
+		table_data = table_data.concat(_tdata);
+		var endpoint = obj['endpoint'];
+		
+		var buf = [];
+		for(var j = 0 ; j < _ctime.length ; j++) {
+			var tmp = [];
+			tmp[0] = fn_toUTC(_ctime[j]);
+			tmp[1] = _cdata[j];
+			buf.push(tmp);
+		}		
+		
+		var _cdataObj = { 'data' : buf , 'name' : endpoint['ep_name'] };
+		//series.push(cdata);
+		//console.log('['+i+']' + JSON.stringify(_cdataObj))
+		series.push(_cdataObj);
+		//console.log(i)
+	}
+	//var series = [ {'data':  cdata['ep_data'], 'name': '1층 온도센서#1'}, ];
+	//console.log(cdata)
+	//console.log(ctime)
+	//console.log(series)
+	var options = get_highchart_options(title,subtitle, ctime, '센서 데이터', series);
 	
 	// show_chart
 	var chart = Highcharts.chart('chart_container', options);
 	chart.setSize(null);
+	show_table(table_data);
 }
 
 function show_table(table) {
@@ -224,20 +301,10 @@ function show_table(table) {
  -->
 <div >
 	<div class="row">
-		<div class="col-lg-2">
-			<div class="row">
-			&nbsp;
-			</div>
-			<!-- 
-			<div class="row">
-			{{ left_view(2) }}
-			</div>
-			<div class="row">
-			{{ left_view(4) }}
-			</div>
-			 -->
+		<div class="col-md-1">
+		&nbsp;
 		</div>
-		<div class="col-lg-7">
+		<div class="col-md-10 ">
 			<!-- MAIN -->
 			<div class="row">
 				<div class="col-sm-12 m-b">
@@ -246,7 +313,7 @@ function show_table(table) {
 					<div class="pull-right">
 					<span id="btn-show"><i class="fa fa-cog"></i></span>
 					</div>
-					<div id='chart_container' style="width:100%;height:300px;padding-top: 10px;"></div>
+					<div id='chart_container' style="width:100%;height:320px;padding-top: 5px;"></div>
 					</div>
 					<!-- CHART -->
 				</div>			
@@ -264,36 +331,6 @@ function show_table(table) {
 			</div>
 			<!-- MAIN -->
 		
-		</div>
-	<div class="col-lg-3">
-		<div class="row m-b">
-		{% call render_form_noSubmit(form, form_id='form_id') %}
-			<div class="col-md-6">
-				{{ render_field(form.time_type) }}
-			</div>
-			<div class="col-md-6">
-				{{ render_field(form.time_day) }}
-			</div>
-			<div class="col-md-12">
-				{{ render_field(form.ep_id) }}
-			</div>
-			<div class="col-md-12">
-				<div class="text-right">
-					<button id="form_show" class='btn btn-success btn-sm'>조회</button>
-				</div>
-			</div>
-		{% endcall %} 
-		</div>
-		<div class="row" >
-			<div class="col-lg-12">
-				<div class="row m-b" >
-					{{ sample_side_table() }}
-				</div>
-				<div class="row m-b" style="display:none;">
-					{{ table_example() }}
-				</div>
-			</div>
-		</div>
 		</div>
 	</div>
 </div>

@@ -104,6 +104,9 @@ def kafka_test_consume_standby():
 import numpy as np
 
 if __name__ == '__main__':
+    print('send')
+    kafka_send_no_lock('v1_server_1', 'test message')
+if __name__ == '__main__x':
 #     kafka_test_consume_standby()
     _topic = '11d764dccdad4977a885104787bef3f8'
     

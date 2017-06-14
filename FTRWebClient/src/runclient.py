@@ -9,9 +9,9 @@ from tornado.web import FallbackHandler, RequestHandler, Application
 
 from app import app
 
-import logging
-logging.basicConfig()
-logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
+# import logging
+# logging.basicConfig()
+# logging.getLogger('sqlalchemy.pool').setLevel(logging.DEBUG)
 
 def runGevent(app,port=5000):
     http_server = WSGIServer(('',port),app)
