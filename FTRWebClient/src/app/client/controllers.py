@@ -33,7 +33,7 @@ def gateway_dashboard(gwId=None):
     data = RmEndpointDataHandler.get_client_dashboard(gw_id, ep_ids, ep_day, time_type)        
     return render_template("client/gateway.html",data=data)
 
-
+client.add_url_rule('/gateway', 'gateway' , gateway_dashboard)
 
 @client.route("/data")
 def gateway_data():
