@@ -8,6 +8,20 @@ from app.client.service.endpoint_data_service import *
 from app.client.service.kafka_handler import kafka_send, kafka_send_no_lock
 from app.cmm.utils.decimal_jsonizer import fn_jsonify
 from flask_cache import Cache 
+from datetime import datetime
+
+def get_gateway():
+    return 'FTM20170601012345678901234567891';
+def get_ep_day():    
+    d = datetime.now()
+    return d.strftime('%Y%m%d')
+    
+def get_ep_time():    
+    d = datetime.now()
+    return d.strftime('%H%M')
+
+def get_time_type():
+    return 'MIN_1'
 
 #cache = Cache(app)
 
@@ -26,10 +40,10 @@ def intro():
 def gateway_dashboard(gwId=None):
 #     if gwId == None:
 #         abort(500)
-    gw_id = 'FTM20170601012345678901234567890'
+    gw_id = get_gateway()
     ep_ids = []    
-    ep_day = '20170613'
-    time_type = 'MIN_1'
+    ep_day = get_ep_day()
+    time_type = get_time_type()
     data = RmEndpointDataHandler.get_client_dashboard(gw_id, ep_ids, ep_day, time_type)        
     return render_template("client/gateway.html",data=data)
 
@@ -37,10 +51,10 @@ client.add_url_rule('/gateway', 'gateway' , gateway_dashboard)
 
 @client.route("/data")
 def gateway_data():
-    gw_id = 'FTM20170601012345678901234567890'
+    gw_id = get_gateway()
     ep_ids = []    
-    ep_day = '20170613'
-    time_type = 'MIN_5'
+    ep_day = get_ep_day()
+    time_type = get_time_type()
     data = RmEndpointDataHandler.get_client_dashboard(gw_id, ep_ids, ep_day, time_type)        
     return fn_jsonify(data)
 
@@ -51,7 +65,7 @@ def dashboard():
     form = DASHBOARD_FORM(request.form)
     form.ep_id.data = 'RCFTMb650ac1514a23af4757411dcc4e'
     param = {
-         'ep_day' : '20170612'
+         'ep_day' : get_ep_day()
         ,'ep_id' : 'a917bacb24804e79ecf7deb9028a0431'
         ,'time_type':'MIN_15'
     }
@@ -114,6 +128,3 @@ def checkbox():
 
 client.add_url_rule('/checkbox', 'checkbox' , checkbox)
 
-if __name__ == '__main__':
-    d = chart_data()
-    print(d)

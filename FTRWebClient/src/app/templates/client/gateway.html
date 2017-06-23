@@ -106,12 +106,11 @@ function get_highchart_options(pTitle,pSubTitle, xCategory, yLabel, series) {
 		'chart' : { 'type' : 'spline' , 'zoomType' : 'x' }
 		, 'subtitle': {'text': pSubTitle}
 		, 'title': {'text': pTitle }
-		,     legend: {
+/* 		,     legend: {
 	        layout: 'vertical',
-	        align: 'right',
 	        verticalAlign: 'middle'
-	    }
-
+	    } */
+		, 'legend' : {}
 		, 'plotOptions' : {
 	       	'spline' : {
 	       		'dataLabels' : { 'enabled' : true }
@@ -140,6 +139,7 @@ function get_highchart_options(pTitle,pSubTitle, xCategory, yLabel, series) {
 
 $(document).ready(function(){
 	render_page();
+	setInterval("render_page()",5000);
 	$('#form_show').click(callback_form_show);
 });
 
@@ -177,9 +177,9 @@ function render_dashboard(data) {
 
 function show_detail(gateways, devices, endpoints) {
 	
-	console.log(gateways);
+/* 	console.log(gateways);
 	console.log(devices);
-	console.log(endpoints);
+	console.log(endpoints); */
 	
 	var $table = $('#device_table_view');
 
@@ -213,7 +213,7 @@ function fn_toUTC(ep_unix) {
 }
 
 function show_chart(cdata,gw) {
-	console.log(gw);
+	//console.log(gw);
 	var title = gw['name'];
 	var subtitle = 'date - ' + gw['date'] + '(' + gw['time_type'] + ')'
 	var ctime = [];
@@ -225,8 +225,13 @@ function show_chart(cdata,gw) {
 		_ctime = obj['chart_time'];
 		_cdata = obj['chart_data'];
 		_tdata = obj['table_data'];
-		table_data = table_data.concat(_tdata);
+		
+		
 		var endpoint = obj['endpoint'];
+		table_data = table_data.concat(_tdata);
+		
+		//console.log("_tdata ->" + JSON.stringify(_tdata[0]));
+		//console.log("endpoint ->" + JSON.stringify(endpoint));
 		
 		var buf = [];
 		for(var j = 0 ; j < _ctime.length ; j++) {
@@ -246,7 +251,7 @@ function show_chart(cdata,gw) {
 	//console.log(cdata)
 	//console.log(ctime)
 	//console.log(series)
-	var options = get_highchart_options(title,subtitle, ctime, '센서 데이터', series);
+	var options = get_highchart_options(title,subtitle, ctime, '측정값', series);
 	
 	// show_chart
 	var chart = Highcharts.chart('chart_container', options);
@@ -257,7 +262,6 @@ function show_chart(cdata,gw) {
 function show_table(table) {
 	var table_data = table;
 	var ds = [];
-	
 
 	for (var i = 0; i < table_data.length; i++) {
 		var obj = table_data[i];
@@ -267,7 +271,7 @@ function show_table(table) {
 		buf.push(obj['ep_time']);
 		buf.push(obj['ep_sec']);
 		buf.push(obj['ep_data']);
-		buf.push(obj['create_dt']);
+		//buf.push(obj['create_dt']);
 		ds.push(buf);
 	}
 	
@@ -300,26 +304,41 @@ function show_table(table) {
 <div class="p-w-md m-t-sm">
  -->
 <div >
-	<div class="row">
+	<div class="row ">
 		<div class="col-md-1">
 		&nbsp;
 		</div>
-		<div class="col-md-10 ">
+		<div class="col-md-10  ">
 			<!-- MAIN -->
 			<div class="row">
-				<div class="col-sm-12 m-b">
+<!-- 				<div class="col-md-12 m-b visible-xs visible-sm">
+<div class="col-lg-3">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <span class="label label-success pull-right">Monthly</span>
+                                <h5>Income</h5>
+                            </div>
+                            <div class="ibox-content">
+                                <h1 class="no-margins">40 886,200</h1>
+                                <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
+                                <small>Total income</small>
+                            </div>
+                        </div>
+                    </div>
+				</div> -->
+				<div class="col-md-12 m-b ">
 					<!-- CHART -->
 					<div class="ibox-content">
-					<div class="pull-right">
+<!-- 					<div class="pull-right">
 					<span id="btn-show"><i class="fa fa-cog"></i></span>
-					</div>
+					</div> -->
 					<div id='chart_container' style="width:100%;height:320px;padding-top: 5px;"></div>
 					</div>
 					<!-- CHART -->
 				</div>			
 			</div>
 			<div class="row">
-				<div class="col-sm-12">
+				<div class="col-md-12">
 					<div class="ibox">
 						<div class="ibox-content show_table">
 							<div class="table-responsive">

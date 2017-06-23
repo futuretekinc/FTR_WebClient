@@ -10,7 +10,8 @@ APP_SALT= b'$2b$05$112yJd.fV8zeGjNk4MVJO'
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
 
 MYSQL_OPER='mysql+pymysql://root:4rnekd9wkd@ftr-app.japanwest.cloudapp.azure.com/ftr_app_db?charset=utf8'
-SQLALCHEMY_DATABASE_URI = MYSQL_OPER
+MYSQL_DB='mysql+pymysql://ftrdb:#4rnekd9wkd@ftrdb.japanwest.cloudapp.azure.com/ftrapp?charset=utf8'
+SQLALCHEMY_DATABASE_URI = MYSQL_DB
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SQLALCHEMY_ECHO = DEBUG
 SQLALCHEMY_COMMIT_ON_TEARDOWN = True

@@ -86,12 +86,12 @@ class RmEndpointDataHandler(object):
             ep_id = ep_info.get('ep_id')
             subq = (db.session.query(func.max(RM_ENDPOINT_DATA.ep_sec).label('max_sec')).group_by(RM_ENDPOINT_DATA.ep_day, RM_ENDPOINT_DATA.ep_time))
             subq = subq.filter(RM_ENDPOINT_DATA.ep_day == ep_day).filter(RM_ENDPOINT_DATA.ep_id == ep_id).subquery()
-        
+
             rows = db.session.query(RM_ENDPOINT_DATA).join(subq, RM_ENDPOINT_DATA.ep_sec == subq.c.max_sec) 
             rows = rows.filter(RM_ENDPOINT_DATA.ep_day== ep_day )
             rows = rows.filter(RM_ENDPOINT_DATA.ep_id == ep_id ) 
             rows = rows.join(CM_TIME, CM_TIME.time_key == RM_ENDPOINT_DATA.ep_time)
-            rows = rows.filter(CM_TIME.time_type==time_type).order_by(desc(RM_ENDPOINT_DATA.ep_time)).limit(600).all()
+            rows = rows.filter(CM_TIME.time_type==time_type).order_by(desc(RM_ENDPOINT_DATA.ep_time)).limit(200).all()
             result = rm_endpoint_data_many.dump(rows)        
             print(result.data)
             df = pd.DataFrame.from_records([ x.__dict__ for x in rows])

@@ -9,6 +9,7 @@ class RM_ENDPOINT_DATA(db.Model):
 #         'schema' : 'appdb',
         'autoload_with': db.engine
     }
+        
 class CM_CODEM(db.Model):
     __tablename__ = "CM_CODEM"
     __table_args__ = { 'autoload' : True, 'autoload_with': db.engine }
@@ -53,7 +54,7 @@ class VW_OB_OBJECTS(db.Model):
                       , autoload=True
                       , autoload_with=db.engine
                       , extend_existing=True )
-    
+
 class SCH_RM_ENDPOINT_DATA(ModelSchema):
     class Meta:
         model = RM_ENDPOINT_DATA
@@ -72,6 +73,7 @@ class SCH_OB_DEVICE(ModelSchema):
 class SCH_OB_ENDPOINT(ModelSchema):
     class Meta:
         model = OB_ENDPOINT
+
 '''
 SqlAlchemyObjectSerializer
 '''
