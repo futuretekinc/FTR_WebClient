@@ -36,6 +36,26 @@ FROM
     ON a.ep_time = c.time_key AND c.time_type = :time_type
 ORDER BY a.ep_day  , a.ep_time , a.ep_sec
 '''
+    
+    @staticmethod
+    def gas_alarm():
+        return '''
+SELECT 
+    b.ep_id
+    , b.ep_name ep_month
+    , a.ep_data
+    , DATE_FORMAT(STR_TO_DATE(CONCAT(a.ep_day, a.ep_time), '%Y%m%d%H%i'),'%Y-%m-%H %H:%i') ep_day
+    , case 
+        when a.ep_data < 20 then 'Normal'
+        when a.ep_data >= 20 and a.ep_data < 40 then 'Alarm1'
+        when a.ep_data >= 40 and a.ep_data < 50 then 'Alarm2'
+        when a.ep_data >= 50 and a.ep_data < 60 then 'Alarm3'
+        else ''
+    end  ep_time
+FROM
+    RM_ENDPOINT_DATA a inner join OB_ENDPOINT b on a.ep_id = b.ep_id and b.ep_name = 'Concentration'
+order by a.ep_day desc, a.ep_time desc limit 1   
+'''
  
 class RmEndpointDataHandler(object):
 
@@ -47,12 +67,13 @@ class RmEndpointDataHandler(object):
             gw['date'] = ep_day
             gw['time_type'] = time_type
             ep_infos = RmEndpointDataHandler.load_endpoints(gw_id,ep_ids)
+            gas_info = RmEndpointDataHandler.do_recent_ep_data()
             buf = []
             for ep_info in ep_infos:
                 ep, ctime, cdata, tdata  = RmEndpointDataHandler.load_endpoint_data(ep_info, ep_day, time_type)
                 if len(ctime) > 0:
                     buf.append(dict([('endpoint',  ep), ('chart_time', ctime), ('chart_data', cdata), ('table_data', tdata)]))
-            result =  {'gateway' : gw,'dashboard' : buf, 'result' : 'succ'}
+            result =  {'gateway' : gw,'dashboard' : buf, 'result' : 'succ','gas_info' : gas_info}
             return result
         except Exception as e:
             return {'gateway' : gw, 'dashboard' : [], 'result' : 'fail', 'error' : str(e) }
@@ -106,6 +127,31 @@ class RmEndpointDataHandler(object):
             print("** " + str(e))
             return (None,[],[],[])
              
+    @staticmethod
+    def do_recent_ep_data():
+        try:
+            rows = db.session.query(RM_ENDPOINT_DATA.ep_id,RM_ENDPOINT_DATA.ep_month,RM_ENDPOINT_DATA.ep_data,RM_ENDPOINT_DATA.ep_time,RM_ENDPOINT_DATA.ep_day) \
+                    .from_statement(RmEndpointDataMapper.gas_alarm()) \
+                    .params({}) \
+                    .one()
+            
+            return {
+                'ep_id' : rows.ep_id
+                , 'ep_name' : rows.ep_month
+                , 'ep_data' : rows.ep_data
+                , 'ep_day' : rows.ep_day
+                , 'ep_alarm' : rows.ep_time
+            }
+        except Exception as e:
+            print(e)
+            return {
+                'ep_id' : 'Not Found'
+                , 'ep_name' : 'Not Found'
+                , 'ep_data' : 'Not Found'
+                , 'ep_day' : 'Not Found'
+                , 'ep_alarm' : 'Not Found'
+            }
+        
     @staticmethod
     def do_save(param=None):
         print(param)

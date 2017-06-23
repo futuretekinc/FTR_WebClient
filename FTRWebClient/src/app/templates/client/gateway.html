@@ -139,7 +139,7 @@ function get_highchart_options(pTitle,pSubTitle, xCategory, yLabel, series) {
 
 $(document).ready(function(){
 	render_page();
-	setInterval("render_page()",5000);
+	//setInterval("render_page()",5000);
 	$('#form_show').click(callback_form_show);
 });
 
@@ -165,14 +165,37 @@ function render_dashboard(data) {
 	
 	var d = data['dashboard'];
 	var gw = data['gateway'];
+	var gas = data['gas_info'];
+
 	//var table_data = data['table'];
 	//var devices = d['devices'];
 	//var endpoints = d['endpoints'];
 	//var gateways = d['gateways'];
 	
+	show_gas(gas);
 	show_chart(d,gw);
 //	show_table(table_data);
 //	show_detail(gateways, devices, endpoints);
+}
+
+function show_gas(gas) {
+	var arm = gas['ep_alarm'];
+	var dat = gas['ep_data'];
+	var time = gas['ep_day'];
+
+	if(arm == 'Normal') {
+		$('#panel_alarm').removeClass('panel-danger');
+		$('#panel_alarm').addClass('panel-info');
+	} else {
+		$('#panel_alarm').removeClass('panel-info');
+		$('#panel_alarm').addClass('panel-danger');
+	}
+	/* gas['ep_id'];
+	gas['ep_name']; */
+	//$('#alarm_pannel')
+	$('#alarm').text('['+arm+']')
+	$('#percent').text(parseInt(dat)+'%')
+	$('#alarm_time').text(time)
 }
 
 function show_detail(gateways, devices, endpoints) {
@@ -275,7 +298,7 @@ function show_table(table) {
 		ds.push(buf);
 	}
 	
-	console.log("ds-->" + ds)
+	//console.log("ds-->" + ds)
 	$('.dataTables-table').DataTable({
 		'processing' : true 
 		, 'bLengthChange' : false
@@ -311,21 +334,38 @@ function show_table(table) {
 		<div class="col-md-10  ">
 			<!-- MAIN -->
 			<div class="row">
-<!-- 				<div class="col-md-12 m-b visible-xs visible-sm">
-<div class="col-lg-3">
+			<div class="col-md-12  visible-xs visible-sm ">
+				<div id="panel_alarm" class="panel panel-info">
+					<div class="panel-heading">
+						<h5>Concentration</h5>
+					</div>
+					<div class="panel-body">
+					<span>
+						<span style="font-size:40px;" id="percent"></span>
+						<span>&nbsp;&nbsp;<span id="alarm"></span></span>
+					</span>
+                                <h6>&nbsp;</h6>
+                                <!-- <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div> -->
+                                <h4>측정시간 : <span id="alarm_time"></span></h4>
+					</div>
+				</div>
+			</div>
+ 				<!-- <div class="col-md-12 m-b">
+ 				
                         <div class="ibox float-e-margins">
                             <div class="ibox-title">
-                                <span class="label label-success pull-right">Monthly</span>
-                                <h5>Income</h5>
+                                <span class="label label-success pull-right">Real Time</span>
+                                <h5>Concentration</h5>
                             </div>
                             <div class="ibox-content">
-                                <h1 class="no-margins">40 886,200</h1>
+                                <h1 class="no-margins" style="font-size:32px">15%</h1>
+                                <span style="font-size:48px;">15%</span>
+                                <h6>&nbsp;</h6>
                                 <div class="stat-percent font-bold text-success">98% <i class="fa fa-bolt"></i></div>
-                                <small>Total income</small>
+                                <h4>측정시간 : 2017-06-23 11:55분</h4>
                             </div>
                         </div>
-                    </div>
-				</div> -->
+				</div>  -->
 				<div class="col-md-12 m-b ">
 					<!-- CHART -->
 					<div class="ibox-content">
